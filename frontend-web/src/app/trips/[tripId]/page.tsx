@@ -23,8 +23,7 @@ export default function TripPage({ params }: Props) {
   const [showAddExpense, setShowAddExpense] = useState(false);
 
   const { data, isLoading, isError, error } = useTripSummary(tripId);
-  const getCurrentMemberId = useTripStore((s) => s.getCurrentMemberId);
-  const currentMemberId = getCurrentMemberId(tripId);
+  const currentMemberId = useTripStore((s) => s.memberIdsByTrip[tripId] ?? null);
 
   if (isLoading) {
     return (
