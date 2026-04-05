@@ -5,7 +5,7 @@
     "lib": ["ES2022"],
     "strict": true,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "..",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

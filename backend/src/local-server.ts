@@ -13,7 +13,11 @@ import * as members from './functions/members';
 import * as expenses from './functions/expenses';
 import * as uploads from './functions/uploads';
 import * as activity from './functions/activity';
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
+
+type Handler = (event: APIGatewayProxyEvent) => Promise<APIGatewayProxyResult>;
+
+
 
 const PORT = process.env.PORT ?? 3001;
 
@@ -48,8 +52,6 @@ function buildEvent(
   };
 }
 
-type Handler = (event: APIGatewayProxyEvent) => Promise<APIGatewayProxyResult>;
-
 interface Route {
   method: string;
   pattern: RegExp;
@@ -59,13 +61,13 @@ interface Route {
 
 const routes: Route[] = [];
 
-function addRoute(method: string, path: string, handler: Handler) {
+function addRoute(method: string, path: string, handler: APIGatewayProxyHandler) {
   const paramNames: string[] = [];
   const pattern = path.replace(/\{(\w+)\}/g, (_, name) => {
     paramNames.push(name);
     return '([^/]+)';
   });
-  routes.push({ method, pattern: new RegExp(`^${pattern}$`), paramNames, handler });
+  routes.push({ method, pattern: new RegExp(`^${pattern}$`), paramNames, handler: handler as Handler });
 }
 
 // Register all routes
@@ -75,13 +77,13 @@ addRoute('PATCH',  '/trips/{tripId}',                                   trips.up
 
 addRoute('POST',   '/trips/{tripId}/members',                           members.create);
 addRoute('GET',    '/trips/{tripId}/members',                           members.list);
-addRoute('DELETE', '/trips/{tripId}/members/{memberId}',               members.remove);
+addRoute('DELETE', '/trips/{tripId}/members/{memberId}',                members.remove);
 
 addRoute('POST',   '/trips/{tripId}/expenses',                          expenses.create);
 addRoute('GET',    '/trips/{tripId}/expenses',                          expenses.list);
 addRoute('GET',    '/trips/{tripId}/expenses/{expenseId}',              expenses.get);
 addRoute('PATCH',  '/trips/{tripId}/expenses/{expenseId}',              expenses.update);
-addRoute('DELETE', '/trips/{tripId}/expenses/{expenseId}',             expenses.remove);
+addRoute('DELETE', '/trips/{tripId}/expenses/{expenseId}',              expenses.remove);
 
 addRoute('POST',   '/trips/{tripId}/expenses/{expenseId}/upload-url',   uploads.getUploadUrl);
 addRoute('PATCH',  '/trips/{tripId}/expenses/{expenseId}/receipt',      uploads.confirmReceipt);
