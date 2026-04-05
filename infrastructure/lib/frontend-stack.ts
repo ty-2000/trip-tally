@@ -70,11 +70,23 @@ applications:
       ],
     });
 
-    new amplify.CfnBranch(this, 'MainBranch', {
+    const mainBranch = new amplify.CfnBranch(this, 'MainBranch', {
       appId: amplifyApp.attrAppId,
       branchName: githubBranch,
       enableAutoBuild: true,
     });
+
+    const customDomain = new amplify.CfnDomain(this, 'AmplifyDomain', {
+      appId: amplifyApp.attrAppId,
+      domainName: 'cornula.com',
+      subDomainSettings: [
+        // trip-tally.cornula.com → main branch
+        { prefix: 'trip-tally', branchName: mainBranch.branchName },
+      ],
+      // Amplify will automatically create/validate the ACM certificate
+      enableAutoSubDomain: false,
+    });
+    customDomain.addDependency(mainBranch);
 
     this.appDefaultDomain = amplifyApp.attrDefaultDomain;
 
@@ -83,7 +95,7 @@ applications:
       exportName: 'TripTallyAmplifyAppId',
     });
     new cdk.CfnOutput(this, 'SiteUrl', {
-      value: `https://${githubBranch}.${amplifyApp.attrDefaultDomain}`,
+      value: 'https://trip-tally.cornula.com',
       exportName: 'TripTallySiteUrl',
     });
   }
