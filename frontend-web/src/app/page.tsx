@@ -68,7 +68,7 @@ export default function HomePage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Start a new trip</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">

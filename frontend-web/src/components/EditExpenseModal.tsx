@@ -107,9 +107,8 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Amount ({currency})</label>
             <input
-              type="number"
-              min="0.01"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
               value={amountStr}
               onChange={(e) => setAmountStr(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"

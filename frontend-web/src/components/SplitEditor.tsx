@@ -92,9 +92,8 @@ export function SplitEditor({
             <div key={m.id} className="flex items-center gap-2">
               <span className="text-sm text-gray-700 w-24 truncate">{m.name}</span>
               <input
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
                 value={exactSplits[m.id] ?? ''}
                 onChange={(e) =>
                   onExactSplitsChange({ ...exactSplits, [m.id]: e.target.value })
@@ -126,10 +125,8 @@ export function SplitEditor({
           <div key={m.id} className="flex items-center gap-2">
             <span className="text-sm text-gray-700 w-24 truncate">{m.name}</span>
             <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
               value={percentageSplits[m.id] ?? ''}
               onChange={(e) =>
                 onPercentageSplitsChange({ ...percentageSplits, [m.id]: e.target.value })

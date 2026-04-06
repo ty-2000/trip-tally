@@ -122,9 +122,8 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
               Amount ({currency}) <span className="text-red-500">*</span>
             </label>
             <input
-              type="number"
-              min="0.01"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
               value={amountStr}
               onChange={(e) => setAmountStr(e.target.value)}
               placeholder="0.00"

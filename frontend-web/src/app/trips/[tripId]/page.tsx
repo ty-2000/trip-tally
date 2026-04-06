@@ -109,16 +109,7 @@ export default function TripPage({ params }: Props) {
 
         {/* Tab content */}
         {activeTab === 'expenses' && (
-          <div className="space-y-4">
-            <button
-              onClick={() => setShowAddExpense(true)}
-              disabled={!currentMemberId}
-              className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed"
-              title={!currentMemberId ? 'Select your name above first' : undefined}
-            >
-              + Add Expense
-            </button>
-
+          <div className="space-y-4 pb-24">
             <ExpenseList
               tripId={tripId}
               expenses={expenses}
@@ -146,6 +137,21 @@ export default function TripPage({ params }: Props) {
           <ActivityFeed tripId={tripId} />
         )}
       </div>
+
+      {/* FAB: Add Expense */}
+      {activeTab === 'expenses' && (
+        <button
+          onClick={() => setShowAddExpense(true)}
+          disabled={!currentMemberId}
+          title={!currentMemberId ? 'Select your name above first' : undefined}
+          className="fixed bottom-6 right-6 z-20 flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+          </svg>
+          Add Expense
+        </button>
+      )}
 
       {/* Add Expense Modal */}
       {showAddExpense && currentMemberId && (
