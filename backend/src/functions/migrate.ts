@@ -94,11 +94,20 @@ export const handler = async () => {
 
   try {
     await withTransaction(async (client) => {
-      // Split on statement boundaries (semicolons followed by newline or end)
-      const statements = SCHEMA
-        .split(/;[ \t]*\n/)
-        .map(s => s.trim())
-        .filter(s => s.length > 0);
+      // Split on semicolons, but skip those inside dollar-quoted blocks ($func$...$func$)
+      const statements: string[] = [];
+      let current = '';
+      let inDollarQuote = false;
+      for (const line of SCHEMA.split('\n')) {
+        if (line.includes('$func$')) inDollarQuote = !inDollarQuote;
+        current += line + '\n';
+        if (!inDollarQuote && line.trimEnd().endsWith(';')) {
+          const stmt = current.trim();
+          if (stmt.length > 0) statements.push(stmt);
+          current = '';
+        }
+      }
+      if (current.trim().length > 0) statements.push(current.trim());
 
       for (const stmt of statements) {
         await client.query(stmt);
