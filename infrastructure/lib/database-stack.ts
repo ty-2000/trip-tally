@@ -56,7 +56,7 @@ export class DatabaseStack extends cdk.Stack {
       credentials: dbCredentials,
       defaultDatabaseName: this.dbName,
       vpc,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
       securityGroups: [this.dbSecurityGroup],
       serverlessV2MinCapacity: 0.5,  // minimum ACU — scales down when idle
       serverlessV2MaxCapacity: 4,    // maximum ACU — increase for higher load

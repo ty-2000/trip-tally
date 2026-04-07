@@ -64,7 +64,7 @@ export class ApiStack extends cdk.Stack {
         depsLockFilePath: path.join(__dirname, '../../backend/package-lock.json'),
         handler,
         vpc,
-        vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+        vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
         securityGroups: [lambdaSG],
         environment: commonEnv,
         timeout: cdk.Duration.seconds(15),

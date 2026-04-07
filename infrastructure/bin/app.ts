@@ -40,7 +40,7 @@ class NetworkStack extends cdk.Stack {
 
     this.vpc = new ec2.Vpc(this, 'Vpc', {
       maxAzs: 2,
-      natGateways: 1,
+      natGateways: 0,
       subnetConfiguration: [
         {
           name: 'Public',
@@ -49,10 +49,21 @@ class NetworkStack extends cdk.Stack {
         },
         {
           name: 'Private',
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
           cidrMask: 24,
         },
       ],
+    });
+
+    // S3 Gateway Endpoint — free, covers Lambda <-> S3 traffic
+    this.vpc.addGatewayEndpoint('S3Endpoint', {
+      service: ec2.GatewayVpcEndpointAwsService.S3,
+    });
+
+    // Secrets Manager Interface Endpoint — replaces NAT for secret fetching
+    this.vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
+      service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+      privateDnsEnabled: true,
     });
 
     new cdk.CfnOutput(this, 'VpcId', { value: this.vpc.vpcId });
