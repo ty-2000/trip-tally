@@ -8,7 +8,6 @@ import { SUPPORTED_CURRENCIES } from '../utils/currency';
 import { useTripStore } from '../store/tripStore';
 
 export default function HomePage() {
-  console.log('HomePage called')
   const router = useRouter();
   const [tripName, setTripName] = useState('');
   const [yourName, setYourName] = useState('');
@@ -20,10 +19,8 @@ export default function HomePage() {
 
   // We need a temporary member creation — handled after trip creation
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('handleSubmit called')
     e.preventDefault();
     setError('');
-    console.log('Creating trip...')
 
     if (!tripName.trim() || !yourName.trim()) {
       setError('Please fill in all required fields.');

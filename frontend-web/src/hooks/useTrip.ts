@@ -11,7 +11,6 @@ import type {
 export const TRIP_KEY = (tripId: string) => ['trip', tripId] as const;
 
 export function useTripSummary(tripId: string) {
-  console.log('useTripSummary', tripId)
   return useQuery({
     queryKey: TRIP_KEY(tripId),
     queryFn: () => api.trips.get(tripId),
