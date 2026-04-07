@@ -16,6 +16,7 @@ export default function HomePage() {
 
   const createTrip = useCreateTrip();
   const setCurrentMember = useTripStore((s) => s.setCurrentMember);
+  const recentTrips = useTripStore((s) => s.recentTrips);
 
   // We need a temporary member creation — handled after trip creation
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,6 +128,27 @@ export default function HomePage() {
             </button>
           </form>
         </div>
+
+        {recentTrips.length > 0 && (
+          <div className="mt-6 bg-white rounded-2xl shadow-lg p-5">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Recent trips</h3>
+            <ul className="space-y-1">
+              {recentTrips.map((t) => (
+                <li key={t.tripId}>
+                  <a
+                    href={`/trips/${t.tripId}`}
+                    className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-indigo-50 text-indigo-700 font-medium text-sm"
+                  >
+                    {t.tripName}
+                    <svg className="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Got a trip link? Paste it in your browser to join.

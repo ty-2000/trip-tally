@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTripSummary } from '../../../hooks/useTrip';
 import { useTripStore } from '../../../store/tripStore';
 import { ExpenseList } from '../../../components/ExpenseList';
@@ -24,6 +24,13 @@ export default function TripPage({ params }: Props) {
 
   const { data, isLoading, isError, error } = useTripSummary(tripId);
   const currentMemberId = useTripStore((s) => s.memberIdsByTrip[tripId] ?? null);
+  const recordVisit = useTripStore((s) => s.recordVisit);
+
+  useEffect(() => {
+    if (data?.trip) {
+      recordVisit(tripId, data.trip.name);
+    }
+  }, [data?.trip?.name]);
 
   if (isLoading) {
     return (
@@ -69,9 +76,16 @@ export default function TripPage({ params }: Props) {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">{trip.name}</h1>
-            <p className="text-sm text-gray-500">{members.length} members</p>
+          <div className="flex items-center gap-3">
+            <a href="/" className="text-gray-400 hover:text-gray-600" aria-label="Home">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7m-9 9V9m0 0h4m-4 0H7" />
+              </svg>
+            </a>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">{trip.name}</h1>
+              <p className="text-sm text-gray-500">{members.length} members</p>
+            </div>
           </div>
           <ShareLink tripId={tripId} />
         </div>
