@@ -17,7 +17,7 @@ interface Props {
 
 export function EditExpenseModal({ tripId, expense, members, currency, currentMemberId, onClose }: Props) {
   const [title, setTitle] = useState(expense.title);
-  const [amountStr, setAmountStr] = useState(centsToDecimal(expense.amount));
+  const [amountStr, setAmountStr] = useState(centsToDecimal(expense.amount, currency));
   const [paidBy, setPaidBy] = useState(expense.paid_by_member_id);
   const [splitType, setSplitType] = useState<SplitType>(expense.split_type);
 
@@ -25,7 +25,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
   const initialExact: Record<string, string> = {};
   const initialPercentage: Record<string, string> = {};
   for (const s of expense.splits) {
-    initialExact[s.member_id] = centsToDecimal(s.amount);
+    initialExact[s.member_id] = centsToDecimal(s.amount, currency);
     if (s.percentage !== undefined) {
       initialPercentage[s.member_id] = String(s.percentage);
     }

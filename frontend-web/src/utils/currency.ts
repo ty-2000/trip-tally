@@ -1,21 +1,25 @@
+// Currencies with no subunit (no cents) — amounts are stored as whole numbers
+const ZERO_DECIMAL_CURRENCIES = new Set(['JPY', 'KRW', 'VND', 'IDR', 'CLP']);
+
 /**
- * Format integer cents as a localized currency string.
- * e.g. formatCents(1234, 'USD') => "$12.34"
+ * Format a stored integer amount as a localized currency string.
+ * For zero-decimal currencies (JPY etc.) the integer IS the amount.
+ * For others it represents cents (e.g. 1234 => $12.34).
  */
-export function formatCents(cents: number, currency: string): string {
+export function formatCents(amount: number, currency: string): string {
+  const isZeroDecimal = ZERO_DECIMAL_CURRENCIES.has(currency.toUpperCase());
   return new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(cents / 100);
+    minimumFractionDigits: isZeroDecimal ? 0 : 2,
+    maximumFractionDigits: isZeroDecimal ? 0 : 2,
+  }).format(amount / 100);
 }
 
 /**
- * Parse a user-typed decimal string into integer cents.
- * e.g. parseToCents("12.34") => 1234
- * e.g. parseToCents("12")    => 1200
- * Returns NaN if the input is not a valid non-negative number.
+ * Parse a user-typed string into a stored integer amount (always *100).
+ * e.g. parseToCents("51", "JPY")   => 5100
+ * e.g. parseToCents("12.34", "USD") => 1234
  */
 export function parseToCents(value: string): number {
   const cleaned = value.replace(/[^0-9.]/g, '');
@@ -25,11 +29,16 @@ export function parseToCents(value: string): number {
 }
 
 /**
- * Convert cents to a decimal string for input display.
- * e.g. centsToDecimal(1234) => "12.34"
+ * Convert a stored integer amount to a decimal string for input display.
+ * For zero-decimal currencies: 5100 => "51"
+ * For others: 1234 => "12.34"
  */
-export function centsToDecimal(cents: number): string {
-  return (cents / 100).toFixed(2);
+export function centsToDecimal(amount: number, currency: string): string {
+  const value = amount / 100;
+  if (ZERO_DECIMAL_CURRENCIES.has(currency.toUpperCase())) {
+    return String(Math.round(value));
+  }
+  return value.toFixed(2);
 }
 
 const SUPPORTED_CURRENCIES = [
