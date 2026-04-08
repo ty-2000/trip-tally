@@ -1,7 +1,9 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { getActivity } from '../services/activityService';
+import { memberRepo, expenseRepo } from '../repositories/postgres';
 import { calculateBalances } from '../services/balanceService';
 import { ok, badRequest, handleError, options } from '../utils/response';
+
 
 // GET /trips/:tripId/activity
 export const list: APIGatewayProxyHandler = async (event) => {
@@ -27,7 +29,11 @@ export const balances: APIGatewayProxyHandler = async (event) => {
     const tripId = event.pathParameters?.tripId;
     if (!tripId) return badRequest('tripId is required');
 
-    const result = await calculateBalances(tripId);
+    const [members, expenses] = await Promise.all([
+      memberRepo.findByTrip(tripId),
+      expenseRepo.findForBalance(tripId),
+    ]);
+    const result = calculateBalances(members, expenses);
     return ok(result);
   } catch (err) {
     return handleError(err);
