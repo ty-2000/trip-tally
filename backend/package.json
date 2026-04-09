@@ -9,7 +9,8 @@
     "lint": "eslint src --ext .ts",
     "dev": "ts-node --transpile-only src/local-server.ts",
     "dev:dynamo": "DB_BACKEND=dynamodb DYNAMODB_ENDPOINT=http://localhost:8000 ts-node --transpile-only src/local-server.ts",
-    "setup:dynamo-local": "ts-node --transpile-only scripts/setup-dynamo-local.ts"
+    "setup:dynamo-local": "ts-node --transpile-only scripts/setup-dynamo-local.ts",
+    "migrate:rds-to-dynamo": "ts-node --transpile-only scripts/migrate-rds-to-dynamo.ts"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1026.0",
