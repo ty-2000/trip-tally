@@ -1,4 +1,4 @@
-import { tripRepo, memberRepo } from '../repositories/postgres';
+import { tripRepo, memberRepo } from '../repositories';
 import { NotFoundError, ConflictError, BadRequestError } from '../utils/response';
 import type { Member } from '../../../shared/types';
 

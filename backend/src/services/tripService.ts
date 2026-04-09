@@ -1,4 +1,4 @@
-import { tripRepo, memberRepo, expenseRepo } from '../repositories/postgres';
+import { tripRepo, memberRepo, expenseRepo } from '../repositories';
 import { calculateBalances } from './balanceService';
 import { NotFoundError } from '../utils/response';
 import type {

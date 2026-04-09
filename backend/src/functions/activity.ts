@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { getActivity } from '../services/activityService';
-import { memberRepo, expenseRepo } from '../repositories/postgres';
+import { memberRepo, expenseRepo } from '../repositories';
 import { calculateBalances } from '../services/balanceService';
 import { ok, badRequest, handleError, options } from '../utils/response';
 

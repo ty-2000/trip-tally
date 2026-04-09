@@ -1,4 +1,4 @@
-import { activityRepo } from '../repositories/postgres';
+import { activityRepo } from '../repositories';
 import type { ActivityEvent } from '../../../shared/types';
 
 export async function getActivity(

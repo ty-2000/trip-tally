@@ -1,4 +1,4 @@
-import { tripRepo, expenseRepo } from '../repositories/postgres';
+import { tripRepo, expenseRepo } from '../repositories';
 import { computeEqualSplits, percentagesToCents, validatePercentageSplits } from './debtSimplification';
 import { NotFoundError, BadRequestError } from '../utils/response';
 import type { Expense, CreateExpenseRequest, UpdateExpenseRequest } from '../../../shared/types';
