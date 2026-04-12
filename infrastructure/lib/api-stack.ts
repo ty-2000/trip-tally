@@ -6,7 +6,6 @@ import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import * as apigatewayv2Integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import * as path from 'path';
 
@@ -101,20 +100,12 @@ export class ApiStack extends cdk.Stack {
 
     const activityListFn   = createFn('activity-list',    'activity.ts',      'list');
     const balancesFn       = createFn('balances',          'activity.ts',      'balances');
-    const migrateFn        = createFn('migrate',           'migrate.ts',       'handler');
-    const migrateToDynamoFn = createFn('migrate-to-dynamo', 'migrateToDynamo.ts', 'handler');
 
     // Grant S3 permissions
     receiptsBucket.grantPut(uploadsUrlFn);
     receiptsBucket.grantRead(expensesListFn);
     receiptsBucket.grantRead(expensesGetFn);
     receiptsBucket.grantRead(tripsGetFn);
-
-    // migrateToDynamo always needs DynamoDB write access (used for one-shot migration)
-    if (dynamoTable) {
-      dynamoTable.grantWriteData(migrateToDynamoFn);
-    }
-    migrateToDynamoFn.addEnvironment('DYNAMODB_TABLE', dynamoTable?.tableName ?? 'trip-tally');
 
     // Grant DynamoDB permissions
     const dynamoFns = [
