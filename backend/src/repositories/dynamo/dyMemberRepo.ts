@@ -69,7 +69,7 @@ export class DyMemberRepository implements IMemberRepository {
     };
     await ddb.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
     const member = itemToMember(item);
-    await dyLogActivity(tripId, 'MEMBER_JOINED', { member_name: member.name }, member.id);
+    await dyLogActivity(tripId, 'MEMBER_JOINED', {}, member.id, member.name);
     return member;
   }
 
@@ -79,13 +79,12 @@ export class DyMemberRepository implements IMemberRepository {
     await ddb.send(
       new DeleteCommand({ TableName: TABLE_NAME, Key: keys.member(tripId, memberId) })
     );
-    await dyLogActivity(tripId, 'MEMBER_REMOVED', { member_name: existing.name }, undefined);
+    await dyLogActivity(tripId, 'MEMBER_REMOVED', {}, undefined, existing.name);
     return existing;
   }
 
   async hasSplits(tripId: string, memberId: string): Promise<boolean> {
     // Query all splits in the trip and check if any reference this member
-    const { PK } = keys.prefixes.activity(tripId);
     const result = await ddb.send(
       new QueryCommand({
         TableName: TABLE_NAME,

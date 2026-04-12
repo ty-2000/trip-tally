@@ -64,7 +64,7 @@ export interface IActivityRepository {
   log(
     tripId: string,
     eventType: ActivityEventType,
-    metadata: Record<string, unknown>,
+    metadata: Record<string, any>,
     memberId?: string
   ): Promise<void>;
   list(

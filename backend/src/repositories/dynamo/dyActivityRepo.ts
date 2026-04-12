@@ -37,7 +37,8 @@ export async function dyLogActivity(
   tripId: string,
   eventType: ActivityEventType,
   metadata: Record<string, unknown>,
-  memberId: string | undefined
+  memberId: string | undefined,
+  memberName?: string
 ): Promise<void> {
   const now = new Date().toISOString();
   const eventId = uuidv4();
@@ -47,6 +48,7 @@ export async function dyLogActivity(
     id: eventId,
     trip_id: tripId,
     member_id: memberId,
+    member_name: memberName,
     event_type: eventType,
     metadata,
     created_at: now,
