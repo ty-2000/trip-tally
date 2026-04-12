@@ -99,7 +99,7 @@ export function SplitEditor({
                   onExactSplitsChange({ ...exactSplits, [m.id]: e.target.value })
                 }
                 placeholder="0.00"
-                className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 px-2 py-1.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           ))}
@@ -132,7 +132,7 @@ export function SplitEditor({
                 onPercentageSplitsChange({ ...percentageSplits, [m.id]: e.target.value })
               }
               placeholder="0"
-              className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-2 py-1.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <span className="text-sm text-gray-400">%</span>
           </div>

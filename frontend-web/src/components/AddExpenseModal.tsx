@@ -112,7 +112,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Dinner at Ichiran"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
               maxLength={255}
             />
           </div>
@@ -127,7 +127,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
               value={amountStr}
               onChange={(e) => setAmountStr(e.target.value)}
               placeholder="0.00"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
             />
           </div>
 
@@ -136,7 +136,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
             <select
               value={paidBy}
               onChange={(e) => setPaidBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base bg-white"
             >
               {members.map((m) => (
                 <option key={m.id} value={m.id}>
