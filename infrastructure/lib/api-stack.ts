@@ -5,6 +5,7 @@ import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import * as apigatewayv2Integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -19,6 +20,13 @@ export interface ApiStackProps extends cdk.StackProps {
   dbName: string;
   receiptsBucket: s3.Bucket;
   frontendUrl?: string;
+  /**
+   * DynamoDB table — always pass so the migration Lambda can write to it.
+   * Set usesDynamoBackend=true to also switch all Lambdas to DB_BACKEND=dynamodb.
+   */
+  dynamoTable?: dynamodb.ITable;
+  /** When true, all Lambdas run with DB_BACKEND=dynamodb. Defaults to false. */
+  usesDynamoBackend?: boolean;
 }
 
 export class ApiStack extends cdk.Stack {
@@ -36,6 +44,7 @@ export class ApiStack extends cdk.Stack {
       dbName,
       receiptsBucket,
       frontendUrl = '*',
+      dynamoTable,
     } = props;
 
     // Shared environment variables for all Lambda functions
@@ -45,6 +54,7 @@ export class ApiStack extends cdk.Stack {
       DB_NAME: dbName,
       RECEIPTS_BUCKET: receiptsBucket.bucketName,
       FRONTEND_URL: frontendUrl,
+      DYNAMODB_TABLE: dynamoTable!.tableName,
     };
 
     // Helper to create a NodejsFunction
@@ -101,15 +111,34 @@ export class ApiStack extends cdk.Stack {
     const uploadsUrlFn      = createFn('uploads-url',     'uploads.ts', 'getUploadUrl');
     const uploadsConfirmFn  = createFn('uploads-confirm', 'uploads.ts', 'confirmReceipt');
 
-    const activityListFn = createFn('activity-list', 'activity.ts', 'list');
-    const balancesFn     = createFn('balances',       'activity.ts', 'balances');
-    const migrateFn      = createFn('migrate',        'migrate.ts',  'handler');
+    const activityListFn   = createFn('activity-list',    'activity.ts',      'list');
+    const balancesFn       = createFn('balances',          'activity.ts',      'balances');
+    const migrateFn        = createFn('migrate',           'migrate.ts',       'handler');
+    const migrateToDynamoFn = createFn('migrate-to-dynamo', 'migrateToDynamo.ts', 'handler');
 
     // Grant S3 permissions
     receiptsBucket.grantPut(uploadsUrlFn);
     receiptsBucket.grantRead(expensesListFn);
     receiptsBucket.grantRead(expensesGetFn);
     receiptsBucket.grantRead(tripsGetFn);
+
+    // migrateToDynamo always needs DynamoDB write access (used for one-shot migration)
+    if (dynamoTable) {
+      dynamoTable.grantWriteData(migrateToDynamoFn);
+    }
+    migrateToDynamoFn.addEnvironment('DYNAMODB_TABLE', dynamoTable?.tableName ?? 'trip-tally');
+
+    // Grant DynamoDB permissions
+    const dynamoFns = [
+      tripsCreateFn, tripsGetFn, tripsUpdateFn,
+      membersCreateFn, membersListFn, membersRemoveFn,
+      expensesCreateFn, expensesListFn, expensesGetFn, expensesUpdateFn, expensesRemoveFn,
+      uploadsUrlFn, uploadsConfirmFn,
+      activityListFn, balancesFn,
+    ];
+    for (const fn of dynamoFns) {
+      dynamoTable!.grantReadWriteData(fn);
+    }
 
     // Inject DB credentials at runtime via Secrets Manager
     // (Lambda reads the secret ARN from env, then calls SM at cold start)
@@ -118,7 +147,7 @@ export class ApiStack extends cdk.Stack {
       membersCreateFn, membersListFn, membersRemoveFn,
       expensesCreateFn, expensesListFn, expensesGetFn, expensesUpdateFn, expensesRemoveFn,
       uploadsUrlFn, uploadsConfirmFn,
-      activityListFn, balancesFn, migrateFn,
+      activityListFn, balancesFn, migrateFn, migrateToDynamoFn,
     ]) {
       fn.addEnvironment('DB_SECRET_ARN', dbSecret.secretArn);
     }

@@ -5,6 +5,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { DatabaseStack } from '../lib/database-stack';
 import { StorageStack } from '../lib/storage-stack';
 import { ApiStack } from '../lib/api-stack';
+import { DynamoStack } from '../lib/dynamo-stack';
 import { FrontendStack } from '../lib/frontend-stack';
 import { GitHubOidcStack } from '../lib/github-oidc-stack';
 
@@ -60,6 +61,11 @@ class NetworkStack extends cdk.Stack {
       service: ec2.GatewayVpcEndpointAwsService.S3,
     });
 
+    // Dynamo DB Endpoint — free, covers Lambda <-> Dynamo traffic
+    this.vpc.addGatewayEndpoint('DynamoDBEndpoint', {
+      service: ec2.GatewayVpcEndpointAwsService.DYNAMODB,
+    });
+
     // Secrets Manager Interface Endpoint — replaces NAT for secret fetching
     this.vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
       service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
@@ -80,6 +86,8 @@ databaseStack.addDependency(networkStack);
 
 const storageStack = new StorageStack(app, 'TripTallyStorageStack', { env });
 
+const dynamoStack = new DynamoStack(app, 'TripTallyDynamoStack', { env });
+
 const apiStack = new ApiStack(app, 'TripTallyApiStack', {
   env,
   vpc: networkStack.vpc,
@@ -90,9 +98,12 @@ const apiStack = new ApiStack(app, 'TripTallyApiStack', {
   dbName: databaseStack.dbName,
   receiptsBucket: storageStack.receiptsBucket,
   // frontendUrl omitted — defaults to '*' since Amplify URL is only known after deploy
+  // dynamoTable always passed so migrate-to-dynamo Lambda gets write access
+  dynamoTable: dynamoStack.table,
 });
 apiStack.addDependency(databaseStack);
 apiStack.addDependency(storageStack);
+apiStack.addDependency(dynamoStack);
 
 // FrontendStack (Amplify) — only created when GitHub env vars are set.
 // GITHUB_REPO format: "owner/repo"
