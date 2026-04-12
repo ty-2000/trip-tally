@@ -1,6 +1,7 @@
 'use client';
 
 import { formatCents } from '../utils/currency';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Balance } from '../../../shared/types';
 
 interface Props {
@@ -9,10 +10,12 @@ interface Props {
 }
 
 export function BalanceSummary({ balances, currency }: Props) {
+  const { t } = useLocale();
+
   if (balances.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400">
-        <p>Add expenses to see balances.</p>
+        <p>{t('balance.noExpenses')}</p>
       </div>
     );
   }
@@ -21,7 +24,7 @@ export function BalanceSummary({ balances, currency }: Props) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Balances</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('balance.title')}</h3>
       <div className="space-y-2">
         {sorted.map((b) => {
           const isPositive = b.net_balance >= 0;
@@ -47,7 +50,7 @@ export function BalanceSummary({ balances, currency }: Props) {
                   {formatCents(b.net_balance, currency)}
                 </span>
                 <p className="text-xs text-gray-400">
-                  {isZero ? 'settled' : isPositive ? 'gets back' : 'owes'}
+                  {isZero ? t('balance.settled') : isPositive ? t('balance.getsBack') : t('balance.owes')}
                 </p>
               </div>
             </div>

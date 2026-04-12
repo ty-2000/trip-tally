@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTripStore } from '../store/tripStore';
 import { useAddMember } from '../hooks/useMembers';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Member } from '../../../shared/types';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function MemberManager({ tripId, members, currentMemberId }: Props) {
+  const { t } = useLocale();
   const [showAddMember, setShowAddMember] = useState(false);
   const [newName, setNewName] = useState('');
   const [error, setError] = useState('');
@@ -33,19 +35,19 @@ export function MemberManager({ tripId, members, currentMemberId }: Props) {
       setNewName('');
       setShowAddMember(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add member');
+      setError(err instanceof Error ? err.message : t('member.failedAdd'));
     }
   };
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-700">Who are you?</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{t('member.whoAreYou')}</h3>
         <button
           onClick={() => setShowAddMember(!showAddMember)}
           className="text-xs text-indigo-600 hover:underline"
         >
-          + Add person
+          {t('member.addPerson')}
         </button>
       </div>
 
@@ -66,7 +68,7 @@ export function MemberManager({ tripId, members, currentMemberId }: Props) {
         ))}
 
         {members.length === 0 && (
-          <p className="text-sm text-gray-400">No members yet. Add yourself to get started.</p>
+          <p className="text-sm text-gray-400">{t('member.noMembers')}</p>
         )}
       </div>
 
@@ -78,7 +80,7 @@ export function MemberManager({ tripId, members, currentMemberId }: Props) {
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            placeholder="Your name"
+            placeholder={t('member.yourNamePlaceholder')}
             className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             maxLength={100}
           />
@@ -87,14 +89,14 @@ export function MemberManager({ tripId, members, currentMemberId }: Props) {
             disabled={addMember.isPending}
             className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
           >
-            Add
+            {t('member.add')}
           </button>
           <button
             type="button"
             onClick={() => { setShowAddMember(false); setNewName(''); }}
             className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700"
           >
-            Cancel
+            {t('member.cancel')}
           </button>
         </form>
       )}
@@ -103,7 +105,7 @@ export function MemberManager({ tripId, members, currentMemberId }: Props) {
 
       {!currentMemberId && (
         <p className="mt-2 text-xs text-amber-600">
-          Select your name above to add expenses.
+          {t('member.selectName')}
         </p>
       )}
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { formatCents } from '../utils/currency';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Settlement } from '../../../shared/types';
 
 interface Props {
@@ -9,11 +10,13 @@ interface Props {
 }
 
 export function SettlementList({ settlements, currency }: Props) {
+  const { t } = useLocale();
+
   if (settlements.length === 0) {
     return (
       <div className="text-center py-6 bg-green-50 rounded-xl border border-green-200">
-        <p className="text-green-700 font-medium">All settled up!</p>
-        <p className="text-green-600 text-sm mt-1">No payments needed.</p>
+        <p className="text-green-700 font-medium">{t('settlement.allSettled')}</p>
+        <p className="text-green-600 text-sm mt-1">{t('settlement.noPayments')}</p>
       </div>
     );
   }
@@ -21,7 +24,7 @@ export function SettlementList({ settlements, currency }: Props) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-gray-700 mb-3">
-        Suggested payments ({settlements.length})
+        {t('settlement.title', { count: settlements.length })}
       </h3>
       <div className="space-y-2">
         {settlements.map((s, i) => (
@@ -53,7 +56,7 @@ export function SettlementList({ settlements, currency }: Props) {
       </div>
 
       <p className="text-xs text-gray-400 text-center mt-3">
-        These are the minimum transactions needed to settle up.
+        {t('settlement.minimumNote')}
       </p>
     </div>
   );

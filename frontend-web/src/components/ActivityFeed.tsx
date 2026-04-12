@@ -1,37 +1,39 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
+import { useLocale } from '../i18n/LocaleContext';
+import type { TFunction } from '../i18n/LocaleContext';
 import type { ActivityEvent } from '../../../shared/types';
 
 interface Props {
   tripId: string;
 }
 
-function eventDescription(event: ActivityEvent): string {
-  const actor = event.member_name ?? 'Someone';
+function eventDescription(event: ActivityEvent, t: TFunction): string {
+  const actor = event.member_name ?? t('activity.someone');
   const meta = event.metadata as Record<string, string | number>;
 
   switch (event.event_type) {
     case 'TRIP_CREATED':
-      return `Trip "${meta.name ?? ''}" was created`;
+      return t('activity.tripCreated', { name: String(meta.name ?? '') });
     case 'MEMBER_JOINED':
-      return `${actor} joined the trip`;
+      return t('activity.memberJoined', { actor });
     case 'MEMBER_REMOVED':
-      return `${meta.member_name ?? actor} was removed from the trip`;
+      return t('activity.memberRemoved', { name: String(meta.member_name ?? actor) });
     case 'EXPENSE_ADDED':
-      return `${actor} added "${meta.title ?? ''}"`;
+      return t('activity.expenseAdded', { actor, title: String(meta.title ?? '') });
     case 'EXPENSE_UPDATED':
-      return `${actor} updated "${meta.title ?? ''}"`;
+      return t('activity.expenseUpdated', { actor, title: String(meta.title ?? '') });
     case 'EXPENSE_DELETED':
-      return `${actor} deleted "${meta.title ?? ''}"`;
+      return t('activity.expenseDeleted', { actor, title: String(meta.title ?? '') });
     default:
       return event.event_type;
   }
 }
 
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(dateStr: string, t: TFunction): string {
   const date = new Date(dateStr);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -39,10 +41,10 @@ function formatRelativeTime(dateStr: string): string {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return 'just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t('activity.justNow');
+  if (diffMins < 60) return t('activity.minsAgo', { count: diffMins });
+  if (diffHours < 24) return t('activity.hoursAgo', { count: diffHours });
+  if (diffDays < 7) return t('activity.daysAgo', { count: diffDays });
   return date.toLocaleDateString();
 }
 
@@ -56,6 +58,7 @@ const EVENT_ICONS: Record<string, string> = {
 };
 
 export function ActivityFeed({ tripId }: Props) {
+  const { t } = useLocale();
   const [cursor, setCursor] = useState<string | undefined>();
   const [events, setEvents] = useState<ActivityEvent[]>([]);
 
@@ -85,7 +88,7 @@ export function ActivityFeed({ tripId }: Props) {
   if (events.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400">
-        <p>No activity yet.</p>
+        <p>{t('activity.noActivity')}</p>
       </div>
     );
   }
@@ -99,9 +102,9 @@ export function ActivityFeed({ tripId }: Props) {
               {EVENT_ICONS[event.event_type] ?? '•'}
             </div>
             <div className="flex-1 pt-1">
-              <p className="text-sm text-gray-700">{eventDescription(event)}</p>
+              <p className="text-sm text-gray-700">{eventDescription(event, t)}</p>
               <p className="text-xs text-gray-400 mt-0.5">
-                {formatRelativeTime(event.created_at)}
+                {formatRelativeTime(event.created_at, t)}
               </p>
             </div>
           </div>
@@ -114,7 +117,7 @@ export function ActivityFeed({ tripId }: Props) {
           disabled={isFetching}
           className="w-full mt-4 py-2 text-sm text-indigo-600 hover:underline disabled:opacity-50"
         >
-          {isFetching ? 'Loading...' : 'Load more'}
+          {isFetching ? t('activity.loading') : t('activity.loadMore')}
         </button>
       )}
     </div>

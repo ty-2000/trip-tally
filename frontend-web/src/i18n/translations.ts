@@ -1,0 +1,246 @@
+export const translations = {
+  en: {
+    // Home page
+    'home.subtitle': 'Track shared expenses with friends. No sign-up needed.',
+    'home.startNewTrip': 'Start a new trip',
+    'home.tripName': 'Trip name',
+    'home.yourName': 'Your name',
+    'home.currency': 'Currency',
+    'home.tripNamePlaceholder': 'e.g. Tokyo Trip 2025',
+    'home.yourNamePlaceholder': 'e.g. Alice',
+    'home.fillRequired': 'Please fill in all required fields.',
+    'home.creating': 'Creating...',
+    'home.createTrip': 'Create Trip',
+    'home.failedCreate': 'Failed to create trip. Please try again.',
+    'home.recentTrips': 'Recent trips',
+    'home.joinTripHint': 'Got a trip link? Paste it in your browser to join.',
+
+    // Trip page
+    'trip.members': '{count} members',
+    'trip.loading': 'Loading trip...',
+    'trip.notFound': 'Trip not found',
+    'trip.notFoundDesc': 'This trip link may be invalid or the trip was deleted.',
+    'trip.createNew': 'Create a new trip',
+    'trip.failedLoad': 'Failed to load trip. Please refresh.',
+    'trip.tabExpenses': 'Expenses',
+    'trip.tabBalances': 'Balances',
+    'trip.tabActivity': 'Activity',
+    'trip.addExpense': 'Add Expense',
+    'trip.selectNameFirst': 'Select your name above first',
+
+    // Expense list
+    'expense.noExpenses': 'No expenses yet. Add the first one!',
+    'expense.paidBy': 'Paid by {name}',
+    'expense.yourShare': 'Your share: {amount}',
+    'expense.viewReceipt': 'View receipt',
+    'expense.splitAmong': 'Split {type} among {count}',
+    'expense.splitTypeEqual': 'equal',
+    'expense.splitTypeExact': 'exact',
+    'expense.splitTypePercentage': 'percentage',
+    'expense.unknown': 'Unknown',
+    'expense.editLabel': 'Edit expense',
+    'expense.deleteLabel': 'Delete expense',
+    'expense.deleteConfirm': 'Delete "{title}"?',
+
+    // Add / Edit expense modal
+    'expense.addTitle': 'Add Expense',
+    'expense.editTitle': 'Edit Expense',
+    'expense.description': 'Description',
+    'expense.descriptionPlaceholder': 'e.g. Dinner at Ichiran',
+    'expense.amount': 'Amount ({currency})',
+    'expense.paidByLabel': 'Paid by',
+    'expense.splitType': 'Split type',
+    'expense.splitEqual': 'Equal',
+    'expense.splitExact': 'Exact',
+    'expense.splitPercent': 'Percent',
+    'expense.validAmountError': 'Please enter a valid amount greater than 0.',
+    'expense.enterTitleError': 'Please enter an expense title.',
+    'expense.selectParticipantError': 'Select at least one participant.',
+    'expense.failedAdd': 'Failed to add expense.',
+    'expense.validAmountError2': 'Please enter a valid amount.',
+    'expense.failedUpdate': 'Failed to update expense.',
+    'expense.saving': 'Saving...',
+    'expense.save': 'Save Expense',
+    'expense.saveChanges': 'Save Changes',
+    'expense.cancel': 'Cancel',
+
+    // Member manager
+    'member.whoAreYou': 'Who are you?',
+    'member.addPerson': '+ Add person',
+    'member.noMembers': 'No members yet. Add yourself to get started.',
+    'member.yourNamePlaceholder': 'Your name',
+    'member.add': 'Add',
+    'member.cancel': 'Cancel',
+    'member.failedAdd': 'Failed to add member',
+    'member.selectName': 'Select your name above to add expenses.',
+
+    // Balance
+    'balance.title': 'Balances',
+    'balance.noExpenses': 'Add expenses to see balances.',
+    'balance.settled': 'settled',
+    'balance.getsBack': 'gets back',
+    'balance.owes': 'owes',
+
+    // Settlement
+    'settlement.title': 'Suggested payments ({count})',
+    'settlement.allSettled': 'All settled up!',
+    'settlement.noPayments': 'No payments needed.',
+    'settlement.minimumNote': 'These are the minimum transactions needed to settle up.',
+
+    // Activity feed
+    'activity.noActivity': 'No activity yet.',
+    'activity.loadMore': 'Load more',
+    'activity.loading': 'Loading...',
+    'activity.tripCreated': 'Trip "{name}" was created',
+    'activity.memberJoined': '{actor} joined the trip',
+    'activity.memberRemoved': '{name} was removed from the trip',
+    'activity.expenseAdded': '{actor} added "{title}"',
+    'activity.expenseUpdated': '{actor} updated "{title}"',
+    'activity.expenseDeleted': '{actor} deleted "{title}"',
+    'activity.justNow': 'just now',
+    'activity.minsAgo': '{count}m ago',
+    'activity.hoursAgo': '{count}h ago',
+    'activity.daysAgo': '{count}d ago',
+    'activity.someone': 'Someone',
+
+    // Share link
+    'share.copied': 'Copied!',
+    'share.share': 'Share',
+
+    // Split editor
+    'split.participants': 'Participants',
+    'split.exactAmounts': 'Exact amounts',
+    'split.percentages': 'Percentages',
+    'split.balanced': 'Splits balance!',
+    'split.unallocated': 'Unallocated: {amount}',
+    'split.overAllocated': 'Over-allocated by: {amount}',
+    'split.sumTo100': 'Percentages sum to 100%!',
+    'split.remaining': 'Remaining: {pct}%',
+  },
+  ja: {
+    // Home page
+    'home.subtitle': '友達との費用を管理。サインアップ不要。',
+    'home.startNewTrip': '新しい旅行を始める',
+    'home.tripName': '旅行名',
+    'home.yourName': 'あなたの名前',
+    'home.currency': '通貨',
+    'home.tripNamePlaceholder': '例: 東京旅行 2025',
+    'home.yourNamePlaceholder': '例: Alice',
+    'home.fillRequired': 'すべての必須項目を入力してください。',
+    'home.creating': '作成中...',
+    'home.createTrip': '旅行を作成',
+    'home.failedCreate': '旅行の作成に失敗しました。もう一度お試しください。',
+    'home.recentTrips': '最近の旅行',
+    'home.joinTripHint': '旅行リンクをお持ちですか？ブラウザに貼り付けて参加してください。',
+
+    // Trip page
+    'trip.members': '{count}人',
+    'trip.loading': '読み込み中...',
+    'trip.notFound': '旅行が見つかりません',
+    'trip.notFoundDesc': 'このリンクは無効か、旅行が削除された可能性があります。',
+    'trip.createNew': '新しい旅行を作成',
+    'trip.failedLoad': '旅行の読み込みに失敗しました。更新してください。',
+    'trip.tabExpenses': '支出',
+    'trip.tabBalances': '精算',
+    'trip.tabActivity': '履歴',
+    'trip.addExpense': '支出を追加',
+    'trip.selectNameFirst': '先に名前を選択してください',
+
+    // Expense list
+    'expense.noExpenses': 'まだ支出がありません。最初の支出を追加しましょう！',
+    'expense.paidBy': '{name} が支払い',
+    'expense.yourShare': 'あなたの分: {amount}',
+    'expense.viewReceipt': '領収書を表示',
+    'expense.splitAmong': '{count}人で{type}割り',
+    'expense.splitTypeEqual': '均等',
+    'expense.splitTypeExact': '個別',
+    'expense.splitTypePercentage': '割合',
+    'expense.unknown': '不明',
+    'expense.editLabel': '支出を編集',
+    'expense.deleteLabel': '支出を削除',
+    'expense.deleteConfirm': '「{title}」を削除しますか？',
+
+    // Add / Edit expense modal
+    'expense.addTitle': '支出を追加',
+    'expense.editTitle': '支出を編集',
+    'expense.description': '内容',
+    'expense.descriptionPlaceholder': '例: 一蘭でのディナー',
+    'expense.amount': '金額 ({currency})',
+    'expense.paidByLabel': '支払い者',
+    'expense.splitType': '割り方',
+    'expense.splitEqual': '均等',
+    'expense.splitExact': '個別',
+    'expense.splitPercent': '割合',
+    'expense.validAmountError': '0より大きい有効な金額を入力してください。',
+    'expense.enterTitleError': '支出の内容を入力してください。',
+    'expense.selectParticipantError': '少なくとも1人の参加者を選択してください。',
+    'expense.failedAdd': '支出の追加に失敗しました。',
+    'expense.validAmountError2': '有効な金額を入力してください。',
+    'expense.failedUpdate': '支出の更新に失敗しました。',
+    'expense.saving': '保存中...',
+    'expense.save': '支出を保存',
+    'expense.saveChanges': '変更を保存',
+    'expense.cancel': 'キャンセル',
+
+    // Member manager
+    'member.whoAreYou': '操作している人を選んでください。',
+    'member.addPerson': 'メンバーを追加',
+    'member.noMembers': 'メンバーがいません。自分を追加して始めましょう。',
+    'member.yourNamePlaceholder': 'あなたの名前',
+    'member.add': '追加',
+    'member.cancel': 'キャンセル',
+    'member.failedAdd': 'メンバーの追加に失敗しました',
+    'member.selectName': '支出を追加するには上で名前を選択してください。',
+
+    // Balance
+    'balance.title': '残高',
+    'balance.noExpenses': '支出を追加すると残高が表示されます。',
+    'balance.settled': '精算済み',
+    'balance.getsBack': '受け取る',
+    'balance.owes': '支払う',
+
+    // Settlement
+    'settlement.title': '支払い提案（{count}件）',
+    'settlement.allSettled': '全員精算済み！',
+    'settlement.noPayments': '支払いは必要ありません。',
+    'settlement.minimumNote': '最も簡単な精算方法です。',
+
+    // Activity feed
+    'activity.noActivity': 'まだ履歴がありません。',
+    'activity.loadMore': 'さらに読み込む',
+    'activity.loading': '読み込み中...',
+    'activity.tripCreated': '旅行「{name}」が作成されました',
+    'activity.memberJoined': '{actor} が参加しました',
+    'activity.memberRemoved': '{name} が削除されました',
+    'activity.expenseAdded': '{actor} が「{title}」を追加しました',
+    'activity.expenseUpdated': '{actor} が「{title}」を更新しました',
+    'activity.expenseDeleted': '{actor} が「{title}」を削除しました',
+    'activity.justNow': 'たった今',
+    'activity.minsAgo': '{count}分前',
+    'activity.hoursAgo': '{count}時間前',
+    'activity.daysAgo': '{count}日前',
+    'activity.someone': '誰か',
+
+    // Share link
+    'share.copied': 'コピーしました！',
+    'share.share': '共有',
+
+    // Split editor
+    'split.participants': '参加者',
+    'split.exactAmounts': '個別金額',
+    'split.percentages': '割合',
+    'split.balanced': '合計が一致しました！',
+    'split.unallocated': '未割当: {amount}',
+    'split.overAllocated': '超過: {amount}',
+    'split.sumTo100': '割合の合計が100%になりました！',
+    'split.remaining': '残り: {pct}%',
+  },
+} as const;
+
+export type Locale = keyof typeof translations;
+export const LOCALES: Locale[] = ['en', 'ja'];
+
+export const LOCALE_LABELS: Record<Locale, string> = {
+  en: 'English',
+  ja: '日本語',
+};

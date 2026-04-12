@@ -10,6 +10,7 @@ import { SettlementList } from '../../../components/SettlementList';
 import { ActivityFeed } from '../../../components/ActivityFeed';
 import { MemberManager } from '../../../components/MemberManager';
 import { ShareLink } from '../../../components/ShareLink';
+import { useLocale, LanguageSwitcher } from '../../../i18n/LocaleContext';
 
 type Tab = 'expenses' | 'balances' | 'activity';
 
@@ -19,6 +20,7 @@ interface Props {
 
 export default function TripPage({ params }: Props) {
   const { tripId } = params;
+  const { t } = useLocale();
   const [activeTab, setActiveTab] = useState<Tab>('expenses');
   const [showAddExpense, setShowAddExpense] = useState(false);
 
@@ -32,12 +34,18 @@ export default function TripPage({ params }: Props) {
     }
   }, [data?.trip?.name]);
 
+  const TAB_LABELS: Record<Tab, string> = {
+    expenses: t('trip.tabExpenses'),
+    balances: t('trip.tabBalances'),
+    activity: t('trip.tabActivity'),
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-gray-500">Loading trip...</p>
+          <p className="text-gray-500">{t('trip.loading')}</p>
         </div>
       </div>
     );
@@ -49,12 +57,12 @@ export default function TripPage({ params }: Props) {
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center max-w-sm">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Trip not found</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('trip.notFound')}</h1>
             <p className="text-gray-500 mb-6">
-              This trip link may be invalid or the trip was deleted.
+              {t('trip.notFoundDesc')}
             </p>
             <a href="/" className="text-indigo-600 hover:underline">
-              Create a new trip
+              {t('trip.createNew')}
             </a>
           </div>
         </div>
@@ -62,7 +70,7 @@ export default function TripPage({ params }: Props) {
     }
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <p className="text-red-600">Failed to load trip. Please refresh.</p>
+        <p className="text-red-600">{t('trip.failedLoad')}</p>
       </div>
     );
   }
@@ -84,10 +92,13 @@ export default function TripPage({ params }: Props) {
             </a>
             <div>
               <h1 className="text-xl font-bold text-gray-900">{trip.name}</h1>
-              <p className="text-sm text-gray-500">{members.length} members</p>
+              <p className="text-sm text-gray-500">{t('trip.members', { count: members.length })}</p>
             </div>
           </div>
-          <ShareLink tripId={tripId} />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ShareLink tripId={tripId} />
+          </div>
         </div>
       </header>
 
@@ -105,13 +116,13 @@ export default function TripPage({ params }: Props) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 text-sm font-medium capitalize ${
+              className={`flex-1 py-2 text-sm font-medium ${
                 activeTab === tab
                   ? 'border-b-2 border-indigo-600 text-indigo-600'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              {tab}
+              {TAB_LABELS[tab]}
               {tab === 'expenses' && expenses.length > 0 && (
                 <span className="ml-1 text-xs bg-indigo-100 text-indigo-700 rounded-full px-1.5">
                   {expenses.length}
@@ -157,13 +168,13 @@ export default function TripPage({ params }: Props) {
         <button
           onClick={() => setShowAddExpense(true)}
           disabled={!currentMemberId}
-          title={!currentMemberId ? 'Select your name above first' : undefined}
+          title={!currentMemberId ? t('trip.selectNameFirst') : undefined}
           className="fixed bottom-6 right-6 z-20 flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
           </svg>
-          Add Expense
+          {t('trip.addExpense')}
         </button>
       )}
 

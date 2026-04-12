@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { formatCents } from '../utils/currency';
 import { useDeleteExpense } from '../hooks/useExpenses';
 import { EditExpenseModal } from './EditExpenseModal';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Expense, Member } from '../../../shared/types';
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function ExpenseList({ tripId, expenses, members, currency, currentMemberId }: Props) {
+  const { t } = useLocale();
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const deleteExpense = useDeleteExpense(tripId);
 
@@ -27,24 +29,32 @@ export function ExpenseList({ tripId, expenses, members, currency, currentMember
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
-        <p>No expenses yet. Add the first one!</p>
+        <p>{t('expense.noExpenses')}</p>
       </div>
     );
   }
 
   const handleDelete = async (expense: Expense) => {
-    if (!confirm(`Delete "${expense.title}"?`)) return;
+    if (!confirm(t('expense.deleteConfirm', { title: expense.title }))) return;
     await deleteExpense.mutateAsync({
       expenseId: expense.id,
       actorMemberId: currentMemberId ?? undefined,
     });
   };
 
+  const splitTypeLabel = (type: string) => {
+    const key = `expense.splitType${type.charAt(0) + type.slice(1).toLowerCase()}` as
+      | 'expense.splitTypeEqual'
+      | 'expense.splitTypeExact'
+      | 'expense.splitTypePercentage';
+    return t(key);
+  };
+
   return (
     <>
       <div className="space-y-3">
         {expenses.map((expense) => {
-          const paidByName = memberMap.get(expense.paid_by_member_id) ?? 'Unknown';
+          const paidByName = memberMap.get(expense.paid_by_member_id) ?? t('expense.unknown');
           const myShare = expense.splits.find((s) => s.member_id === currentMemberId);
 
           return (
@@ -56,12 +66,11 @@ export function ExpenseList({ tripId, expenses, members, currency, currentMember
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-gray-900 truncate">{expense.title}</h3>
                   <p className="text-sm text-gray-500 mt-0.5">
-                    Paid by{' '}
-                    <span className="font-medium text-gray-700">{paidByName}</span>
+                    {t('expense.paidBy', { name: paidByName })}
                   </p>
                   {myShare && (
                     <p className="text-xs text-indigo-600 mt-1">
-                      Your share: {formatCents(myShare.amount, currency)}
+                      {t('expense.yourShare', { amount: formatCents(myShare.amount, currency) })}
                     </p>
                   )}
                   {expense.receipt_url && (
@@ -71,7 +80,7 @@ export function ExpenseList({ tripId, expenses, members, currency, currentMember
                       rel="noopener noreferrer"
                       className="text-xs text-blue-500 hover:underline mt-1 inline-block"
                     >
-                      View receipt
+                      {t('expense.viewReceipt')}
                     </a>
                   )}
                 </div>
@@ -86,7 +95,7 @@ export function ExpenseList({ tripId, expenses, members, currency, currentMember
                       <button
                         onClick={() => setEditingExpense(expense)}
                         className="p-2.5 text-gray-400 hover:text-indigo-600 rounded-lg"
-                        title="Edit expense"
+                        title={t('expense.editLabel')}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -96,7 +105,7 @@ export function ExpenseList({ tripId, expenses, members, currency, currentMember
                       <button
                         onClick={() => handleDelete(expense)}
                         className="p-2.5 text-gray-400 hover:text-red-600 rounded-lg"
-                        title="Delete expense"
+                        title={t('expense.deleteLabel')}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -111,7 +120,10 @@ export function ExpenseList({ tripId, expenses, members, currency, currentMember
               {/* Split breakdown */}
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-400 mb-1">
-                  Split {expense.split_type.toLowerCase()} among {expense.splits.length}
+                  {t('expense.splitAmong', {
+                    type: splitTypeLabel(expense.split_type),
+                    count: expense.splits.length,
+                  })}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {expense.splits.map((split) => (

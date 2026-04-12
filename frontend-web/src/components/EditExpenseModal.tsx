@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useUpdateExpense } from '../hooks/useExpenses';
 import { parseToCents, centsToDecimal } from '../utils/currency';
 import { SplitEditor } from './SplitEditor';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Expense, Member, SplitType } from '../../../shared/types';
 
 interface Props {
@@ -15,7 +16,8 @@ interface Props {
   onClose: () => void;
 }
 
-export function EditExpenseModal({ tripId, expense, members, currency, currentMemberId, onClose }: Props) {
+export function EditExpenseModal({ tripId, expense, members, currency, onClose }: Props) {
+  const { t } = useLocale();
   const [title, setTitle] = useState(expense.title);
   const [amountStr, setAmountStr] = useState(centsToDecimal(expense.amount, currency));
   const [paidBy, setPaidBy] = useState(expense.paid_by_member_id);
@@ -44,7 +46,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
 
     const amountCents = parseToCents(amountStr);
     if (isNaN(amountCents) || amountCents <= 0) {
-      setError('Please enter a valid amount.');
+      setError(t('expense.validAmountError2'));
       return;
     }
 
@@ -75,7 +77,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
       await updateExpense.mutateAsync({ expenseId: expense.id, data });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update expense.');
+      setError(err instanceof Error ? err.message : t('expense.failedUpdate'));
     }
   };
 
@@ -84,7 +86,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Edit Expense</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('expense.editTitle')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -94,7 +96,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('expense.description')}</label>
             <input
               type="text"
               value={title}
@@ -105,7 +107,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Amount ({currency})</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('expense.amount', { currency })}</label>
             <input
               type="text"
               inputMode="decimal"
@@ -116,7 +118,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Paid by</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('expense.paidByLabel')}</label>
             <select
               value={paidBy}
               onChange={(e) => setPaidBy(e.target.value)}
@@ -129,7 +131,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Split type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('expense.splitType')}</label>
             <div className="grid grid-cols-3 gap-2">
               {(['EQUAL', 'EXACT', 'PERCENTAGE'] as const).map((type) => (
                 <button
@@ -142,7 +144,7 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
                       : 'bg-white text-gray-600 border-gray-300 hover:border-indigo-400'
                   }`}
                 >
-                  {type === 'EQUAL' ? 'Equal' : type === 'EXACT' ? 'Exact' : 'Percent'}
+                  {type === 'EQUAL' ? t('expense.splitEqual') : type === 'EXACT' ? t('expense.splitExact') : t('expense.splitPercent')}
                 </button>
               ))}
             </div>
@@ -171,14 +173,14 @@ export function EditExpenseModal({ tripId, expense, members, currency, currentMe
               onClick={onClose}
               className="flex-1 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
             >
-              Cancel
+              {t('expense.cancel')}
             </button>
             <button
               type="submit"
               disabled={updateExpense.isPending}
               className="flex-1 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 disabled:opacity-50"
             >
-              {updateExpense.isPending ? 'Saving...' : 'Save Changes'}
+              {updateExpense.isPending ? t('expense.saving') : t('expense.saveChanges')}
             </button>
           </div>
         </form>

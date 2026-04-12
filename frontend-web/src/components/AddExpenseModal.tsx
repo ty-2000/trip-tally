@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useCreateExpense } from '../hooks/useExpenses';
 import { parseToCents } from '../utils/currency';
 import { SplitEditor } from './SplitEditor';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Member, SplitType } from '../../../shared/types';
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function AddExpenseModal({ tripId, members, currency, currentMemberId, onClose }: Props) {
+  const { t } = useLocale();
   const [title, setTitle] = useState('');
   const [amountStr, setAmountStr] = useState('');
   const [paidBy, setPaidBy] = useState(currentMemberId);
@@ -32,18 +34,18 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
 
     const amountCents = parseToCents(amountStr);
     if (isNaN(amountCents) || amountCents <= 0) {
-      setError('Please enter a valid amount greater than 0.');
+      setError(t('expense.validAmountError'));
       return;
     }
     if (!title.trim()) {
-      setError('Please enter an expense title.');
+      setError(t('expense.enterTitleError'));
       return;
     }
 
     try {
       if (splitType === 'EQUAL') {
         if (participantIds.length === 0) {
-          setError('Select at least one participant.');
+          setError(t('expense.selectParticipantError'));
           return;
         }
         await createExpense.mutateAsync({
@@ -84,7 +86,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
 
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add expense.');
+      setError(err instanceof Error ? err.message : t('expense.failedAdd'));
     }
   };
 
@@ -93,7 +95,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Add Expense</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('expense.addTitle')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -104,14 +106,14 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-red-500">*</span>
+              {t('expense.description')} <span className="text-red-500">*</span>
             </label>
             <input
               autoFocus
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Dinner at Ichiran"
+              placeholder={t('expense.descriptionPlaceholder')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
               maxLength={255}
             />
@@ -119,7 +121,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount ({currency}) <span className="text-red-500">*</span>
+              {t('expense.amount', { currency })} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -132,7 +134,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Paid by</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('expense.paidByLabel')}</label>
             <select
               value={paidBy}
               onChange={(e) => setPaidBy(e.target.value)}
@@ -148,7 +150,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
 
           {/* Split type selector */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Split type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('expense.splitType')}</label>
             <div className="grid grid-cols-3 gap-2">
               {(['EQUAL', 'EXACT', 'PERCENTAGE'] as const).map((type) => (
                 <button
@@ -161,7 +163,7 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
                       : 'bg-white text-gray-600 border-gray-300 hover:border-indigo-400'
                   }`}
                 >
-                  {type === 'EQUAL' ? 'Equal' : type === 'EXACT' ? 'Exact' : 'Percent'}
+                  {type === 'EQUAL' ? t('expense.splitEqual') : type === 'EXACT' ? t('expense.splitExact') : t('expense.splitPercent')}
                 </button>
               ))}
             </div>
@@ -190,14 +192,14 @@ export function AddExpenseModal({ tripId, members, currency, currentMemberId, on
               onClick={onClose}
               className="flex-1 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
             >
-              Cancel
+              {t('expense.cancel')}
             </button>
             <button
               type="submit"
               disabled={createExpense.isPending}
               className="flex-1 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 disabled:opacity-50"
             >
-              {createExpense.isPending ? 'Saving...' : 'Save Expense'}
+              {createExpense.isPending ? t('expense.saving') : t('expense.save')}
             </button>
           </div>
         </form>

@@ -1,6 +1,7 @@
 'use client';
 
 import { formatCents } from '../utils/currency';
+import { useLocale } from '../i18n/LocaleContext';
 import type { Member, SplitType } from '../../../shared/types';
 
 interface Props {
@@ -28,6 +29,8 @@ export function SplitEditor({
   onExactSplitsChange,
   onPercentageSplitsChange,
 }: Props) {
+  const { t } = useLocale();
+
   const toggleParticipant = (memberId: string) => {
     if (participantIds.includes(memberId)) {
       onParticipantsChange(participantIds.filter((id) => id !== memberId));
@@ -54,7 +57,7 @@ export function SplitEditor({
 
     return (
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Participants</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('split.participants')}</label>
         <div className="space-y-1">
           {members.map((m) => {
             const isSelected = participantIds.includes(m.id);
@@ -86,7 +89,7 @@ export function SplitEditor({
     const remaining = amountCents - Math.round(exactSum);
     return (
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Exact amounts</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('split.exactAmounts')}</label>
         <div className="space-y-2">
           {members.map((m) => (
             <div key={m.id} className="flex items-center gap-2">
@@ -106,10 +109,10 @@ export function SplitEditor({
         </div>
         <p className={`text-xs mt-2 ${Math.abs(remaining) < 1 ? 'text-green-600' : 'text-amber-600'}`}>
           {Math.abs(remaining) < 1
-            ? 'Splits balance!'
+            ? t('split.balanced')
             : remaining > 0
-            ? `Unallocated: ${formatCents(remaining, currency)}`
-            : `Over-allocated by: ${formatCents(-remaining, currency)}`}
+            ? t('split.unallocated', { amount: formatCents(remaining, currency) })
+            : t('split.overAllocated', { amount: formatCents(-remaining, currency) })}
         </p>
       </div>
     );
@@ -119,7 +122,7 @@ export function SplitEditor({
   const remainingPct = 100 - percentageSum;
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Percentages</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('split.percentages')}</label>
       <div className="space-y-2">
         {members.map((m) => (
           <div key={m.id} className="flex items-center gap-2">
@@ -140,8 +143,8 @@ export function SplitEditor({
       </div>
       <p className={`text-xs mt-2 ${Math.abs(remainingPct) < 0.01 ? 'text-green-600' : 'text-amber-600'}`}>
         {Math.abs(remainingPct) < 0.01
-          ? 'Percentages sum to 100%!'
-          : `Remaining: ${remainingPct.toFixed(2)}%`}
+          ? t('split.sumTo100')
+          : t('split.remaining', { pct: remainingPct.toFixed(2) })}
       </p>
     </div>
   );
