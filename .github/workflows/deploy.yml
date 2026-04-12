@@ -78,29 +78,3 @@ jobs:
           name: cdk-outputs
           path: infrastructure/cdk-outputs.json
           retention-days: 7
-
-  # ----------------------------------------------------------------
-  # 2. Run DB migrations (schema is idempotent, safe to re-run)
-  # ----------------------------------------------------------------
-  run-migrations:
-    name: Run DB migrations
-    runs-on: ubuntu-latest
-    needs: deploy-infrastructure
-
-    steps:
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Invoke migration Lambda
-        run: |
-          aws lambda invoke \
-            --function-name trip-tally-migrate \
-            --region ${{ env.AWS_REGION }} \
-            --payload '{}' \
-            /tmp/migrate-out.json
-          cat /tmp/migrate-out.json
-          # Fail the job if migration reported an error
-          jq -e '.success == true' /tmp/migrate-out.json

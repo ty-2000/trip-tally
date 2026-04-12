@@ -16,6 +16,6 @@
       "@trip-tally/types": ["../shared/types/index.ts"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "scripts/**/*"],
   "exclude": ["node_modules", "dist", "**/__tests__/**"]
 }
