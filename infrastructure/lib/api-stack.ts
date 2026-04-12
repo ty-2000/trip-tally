@@ -12,12 +12,6 @@ import * as path from 'path';
 
 export interface ApiStackProps extends cdk.StackProps {
   vpc: ec2.Vpc;
-  /** Lambda SG created in DatabaseStack to avoid a cross-stack dependency cycle. */
-  lambdaSecurityGroup: ec2.SecurityGroup;
-  dbSecret: secretsmanager.ISecret;
-  dbHost: string;
-  dbPort: string;
-  dbName: string;
   receiptsBucket: s3.Bucket;
   frontendUrl?: string;
   /**
@@ -37,11 +31,6 @@ export class ApiStack extends cdk.Stack {
 
     const {
       vpc,
-      lambdaSecurityGroup: lambdaSG,
-      dbSecret,
-      dbHost,
-      dbPort,
-      dbName,
       receiptsBucket,
       frontendUrl = '*',
       dynamoTable,
@@ -49,13 +38,15 @@ export class ApiStack extends cdk.Stack {
 
     // Shared environment variables for all Lambda functions
     const commonEnv: Record<string, string> = {
-      DB_HOST: dbHost,
-      DB_PORT: dbPort,
-      DB_NAME: dbName,
       RECEIPTS_BUCKET: receiptsBucket.bucketName,
       FRONTEND_URL: frontendUrl,
       DYNAMODB_TABLE: dynamoTable!.tableName,
     };
+
+    const lambdaSecurityGroup = new ec2.SecurityGroup(this, 'LambdaSG', {
+      vpc,
+      description: 'Lambda functions - allows outbound to RDS',
+    });
 
     // Helper to create a NodejsFunction
     const createFn = (
@@ -75,7 +66,7 @@ export class ApiStack extends cdk.Stack {
         handler,
         vpc,
         vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
-        securityGroups: [lambdaSG],
+        securityGroups: [lambdaSecurityGroup],
         environment: commonEnv,
         timeout: cdk.Duration.seconds(15),
         memorySize: 256,
@@ -86,9 +77,6 @@ export class ApiStack extends cdk.Stack {
           externalModules: ['pg-native'],
         },
       });
-
-      // Grant read access to DB secret
-      dbSecret.grantRead(fn);
 
       return fn;
     };
@@ -138,18 +126,6 @@ export class ApiStack extends cdk.Stack {
     ];
     for (const fn of dynamoFns) {
       dynamoTable!.grantReadWriteData(fn);
-    }
-
-    // Inject DB credentials at runtime via Secrets Manager
-    // (Lambda reads the secret ARN from env, then calls SM at cold start)
-    for (const fn of [
-      tripsCreateFn, tripsGetFn, tripsUpdateFn,
-      membersCreateFn, membersListFn, membersRemoveFn,
-      expensesCreateFn, expensesListFn, expensesGetFn, expensesUpdateFn, expensesRemoveFn,
-      uploadsUrlFn, uploadsConfirmFn,
-      activityListFn, balancesFn, migrateFn, migrateToDynamoFn,
-    ]) {
-      fn.addEnvironment('DB_SECRET_ARN', dbSecret.secretArn);
     }
 
     // HTTP API (API Gateway v2)

@@ -53,7 +53,7 @@ jobs:
         run: |
           npx cdk deploy \
             TripTallyNetworkStack \
-            TripTallyDatabaseStack \
+            TripTallyDynamoStack \
             TripTallyStorageStack \
             TripTallyApiStack \
             TripTallyFrontendStack \

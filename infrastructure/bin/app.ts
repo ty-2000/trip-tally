@@ -2,7 +2,6 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { DatabaseStack } from '../lib/database-stack';
 import { StorageStack } from '../lib/storage-stack';
 import { ApiStack } from '../lib/api-stack';
 import { DynamoStack } from '../lib/dynamo-stack';
@@ -66,23 +65,11 @@ class NetworkStack extends cdk.Stack {
       service: ec2.GatewayVpcEndpointAwsService.DYNAMODB,
     });
 
-    // Secrets Manager Interface Endpoint — replaces NAT for secret fetching
-    this.vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
-      service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
-      privateDnsEnabled: true,
-    });
-
     new cdk.CfnOutput(this, 'VpcId', { value: this.vpc.vpcId });
   }
 }
 
 const networkStack = new NetworkStack(app, 'TripTallyNetworkStack', { env });
-
-const databaseStack = new DatabaseStack(app, 'TripTallyDatabaseStack', {
-  env,
-  vpc: networkStack.vpc,
-});
-databaseStack.addDependency(networkStack);
 
 const storageStack = new StorageStack(app, 'TripTallyStorageStack', { env });
 
@@ -91,17 +78,11 @@ const dynamoStack = new DynamoStack(app, 'TripTallyDynamoStack', { env });
 const apiStack = new ApiStack(app, 'TripTallyApiStack', {
   env,
   vpc: networkStack.vpc,
-  lambdaSecurityGroup: databaseStack.lambdaSecurityGroup,
-  dbSecret: databaseStack.dbSecret,
-  dbHost: databaseStack.dbHost,
-  dbPort: databaseStack.dbPort,
-  dbName: databaseStack.dbName,
   receiptsBucket: storageStack.receiptsBucket,
   // frontendUrl omitted — defaults to '*' since Amplify URL is only known after deploy
   // dynamoTable always passed so migrate-to-dynamo Lambda gets write access
   dynamoTable: dynamoStack.table,
 });
-apiStack.addDependency(databaseStack);
 apiStack.addDependency(storageStack);
 apiStack.addDependency(dynamoStack);
 
