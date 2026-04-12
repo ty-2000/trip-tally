@@ -81,20 +81,20 @@ export function MemberManager({ tripId, members, currentMemberId }: Props) {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder={t('member.yourNamePlaceholder')}
-            className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 px-3 py-1.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             maxLength={100}
           />
           <button
             type="submit"
             disabled={addMember.isPending}
-            className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+            className="px-3 py-1.5 text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
           >
             {t('member.add')}
           </button>
           <button
             type="button"
             onClick={() => { setShowAddMember(false); setNewName(''); }}
-            className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700"
+            className="px-3 py-1.5 text-base text-gray-500 hover:text-gray-700"
           >
             {t('member.cancel')}
           </button>
