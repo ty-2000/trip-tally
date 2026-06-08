@@ -93,7 +93,6 @@ export class DyExpenseRepository implements IExpenseRepository {
         KeyConditionExpression: 'PK = :pk AND begins_with(SK, :prefix)',
         FilterExpression: 'id = :id',
         ExpressionAttributeValues: { ':pk': PK, ':prefix': SKPrefix, ':id': expenseId },
-        Limit: 1,
       })
     );
     const item = result.Items?.[0] as ExpenseItem | undefined;
