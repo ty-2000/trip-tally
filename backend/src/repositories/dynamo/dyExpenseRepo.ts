@@ -238,11 +238,14 @@ export class DyExpenseRepository implements IExpenseRepository {
         created_at: now,
       }));
 
+      const newSplitKeys = new Set(finalSplitItems.map((s) => s.SK));
+      const splitsToDelete = oldSplits.filter((s) => !newSplitKeys.has(s.SK));
+
       await ddb.send(
         new TransactWriteCommand({
           TransactItems: [
             { Put: { TableName: TABLE_NAME, Item: updatedItem } },
-            ...oldSplits.map((s) => ({
+            ...splitsToDelete.map((s) => ({
               Delete: { TableName: TABLE_NAME, Key: { PK: s.PK, SK: s.SK } },
             })),
             ...finalSplitItems.map((s) => ({ Put: { TableName: TABLE_NAME, Item: s } })),
