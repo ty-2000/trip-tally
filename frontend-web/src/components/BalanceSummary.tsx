@@ -35,7 +35,14 @@ export function BalanceSummary({ balances, currency }: Props) {
               key={b.member_id}
               className="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-4 py-3"
             >
-              <span className="font-medium text-gray-800">{b.member_name}</span>
+              <div>
+                <span className="font-medium text-gray-800">{b.member_name}</span>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {t('balance.spent')}: {formatCents(b.total_spent, currency)}
+                  {' · '}
+                  {t('balance.paid')}: {formatCents(b.total_paid, currency)}
+                </p>
+              </div>
               <div className="text-right">
                 <span
                   className={`font-semibold ${

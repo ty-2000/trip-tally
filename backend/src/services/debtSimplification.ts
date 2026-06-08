@@ -12,7 +12,9 @@ import type { Balance, Settlement } from '../../../shared/types';
  *
  * All amounts must be in integer cents to avoid floating-point drift.
  */
-export function simplifyDebts(balances: Balance[]): Settlement[] {
+export function simplifyDebts(
+  balances: Pick<Balance, 'member_id' | 'member_name' | 'net_balance'>[]
+): Settlement[] {
   const creditors: Array<{ member_id: string; member_name: string; amount: number }> = [];
   const debtors: Array<{ member_id: string; member_name: string; amount: number }> = [];
 

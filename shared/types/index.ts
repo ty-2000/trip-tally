@@ -51,6 +51,8 @@ export interface Balance {
   member_id: string;
   member_name: string;
   net_balance: number; // positive = owed money, negative = owes money (cents)
+  total_spent: number; // total share of expenses this member consumed (cents)
+  total_paid: number; // total amount this member paid (cents)
 }
 
 export interface Settlement {

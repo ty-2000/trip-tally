@@ -8,7 +8,7 @@ import type { Balance } from '../../../../shared/types';
 
 describe('simplifyDebts', () => {
   it('returns empty array when all balances are zero', () => {
-    const balances: Balance[] = [
+    const balances: Pick<Balance, 'member_id' | 'member_name' | 'net_balance'>[] = [
       { member_id: 'a', member_name: 'Alice', net_balance: 0 },
       { member_id: 'b', member_name: 'Bob', net_balance: 0 },
     ];
@@ -16,7 +16,7 @@ describe('simplifyDebts', () => {
   });
 
   it('produces one transaction for a simple two-person debt', () => {
-    const balances: Balance[] = [
+    const balances: Pick<Balance, 'member_id' | 'member_name' | 'net_balance'>[] = [
       { member_id: 'a', member_name: 'Alice', net_balance: 1000 },
       { member_id: 'b', member_name: 'Bob', net_balance: -1000 },
     ];
@@ -31,7 +31,7 @@ describe('simplifyDebts', () => {
 
   it('minimizes transactions for three-person scenario', () => {
     // Alice paid for everything: owes +2000, Bob owes -1000, Carol owes -1000
-    const balances: Balance[] = [
+    const balances: Pick<Balance, 'member_id' | 'member_name' | 'net_balance'>[] = [
       { member_id: 'a', member_name: 'Alice', net_balance: 2000 },
       { member_id: 'b', member_name: 'Bob', net_balance: -1000 },
       { member_id: 'c', member_name: 'Carol', net_balance: -1000 },
@@ -44,7 +44,7 @@ describe('simplifyDebts', () => {
   });
 
   it('handles a complex four-person scenario with minimal transactions', () => {
-    const balances: Balance[] = [
+    const balances: Pick<Balance, 'member_id' | 'member_name' | 'net_balance'>[] = [
       { member_id: 'a', member_name: 'Alice', net_balance: 3000 },
       { member_id: 'b', member_name: 'Bob', net_balance: -1000 },
       { member_id: 'c', member_name: 'Carol', net_balance: -1000 },
@@ -57,7 +57,7 @@ describe('simplifyDebts', () => {
   });
 
   it('net balances sum to zero (invariant)', () => {
-    const balances: Balance[] = [
+    const balances: Pick<Balance, 'member_id' | 'member_name' | 'net_balance'>[] = [
       { member_id: 'a', member_name: 'Alice', net_balance: 1500 },
       { member_id: 'b', member_name: 'Bob', net_balance: -500 },
       { member_id: 'c', member_name: 'Carol', net_balance: -1000 },

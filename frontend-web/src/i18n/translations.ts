@@ -80,6 +80,8 @@ export const translations = {
     'balance.settled': 'settled',
     'balance.getsBack': 'gets back',
     'balance.owes': 'owes',
+    'balance.spent': 'spent',
+    'balance.paid': 'paid',
 
     // Settlement
     'settlement.title': 'Suggested payments ({count})',
@@ -198,6 +200,8 @@ export const translations = {
     'balance.settled': '精算済み',
     'balance.getsBack': '受け取る',
     'balance.owes': '支払う',
+    'balance.spent': '使った額',
+    'balance.paid': '立替額',
 
     // Settlement
     'settlement.title': '支払い提案（{count}件）',

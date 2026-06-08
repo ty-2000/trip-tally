@@ -8,14 +8,21 @@ export function calculateBalances(
 ): { balances: Balance[]; settlements: Settlement[] } {
   const memberMap = new Map(members.map((m) => [m.id, m.name]));
   const netBalances = new Map<string, number>(members.map((m) => [m.id, 0]));
+  const totalPaid = new Map<string, number>(members.map((m) => [m.id, 0]));
+  const totalSpent = new Map<string, number>(members.map((m) => [m.id, 0]));
 
   for (const expense of expenses) {
     const currentPayer = netBalances.get(expense.paid_by_member_id) ?? 0;
     netBalances.set(expense.paid_by_member_id, currentPayer + expense.paid_amount);
+    totalPaid.set(
+      expense.paid_by_member_id,
+      (totalPaid.get(expense.paid_by_member_id) ?? 0) + expense.paid_amount
+    );
 
     for (const split of expense.splits) {
       const current = netBalances.get(split.member_id) ?? 0;
       netBalances.set(split.member_id, current - split.amount);
+      totalSpent.set(split.member_id, (totalSpent.get(split.member_id) ?? 0) + split.amount);
     }
   }
 
@@ -23,6 +30,8 @@ export function calculateBalances(
     member_id: m.id,
     member_name: memberMap.get(m.id) ?? m.id,
     net_balance: netBalances.get(m.id) ?? 0,
+    total_spent: totalSpent.get(m.id) ?? 0,
+    total_paid: totalPaid.get(m.id) ?? 0,
   }));
 
   const settlements = simplifyDebts(balances);
